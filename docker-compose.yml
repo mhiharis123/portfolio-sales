@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: portfolio-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: portfolio-backend:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_XYZ_URL=${BETTER_AUTH_XYZ_URL} # URL where this backend is accessible
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+    networks:
+      - portfolio_net
+
+networks:
+  portfolio_net:
+    external: true # Assumes you attach to your existing Dokploy network

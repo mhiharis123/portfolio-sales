@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, FileIcon, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { uploadFile } from "@/actions/upload";
+// import { uploadFile } from "@/actions/upload";
 
 export default function FileUploader() {
     const [file, setFile] = useState<File | null>(null);
@@ -58,13 +58,28 @@ export default function FileUploader() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await uploadFile(formData);
+        try {
+            // Use local base URL during dev, or standard relative path if on same domain, 
+            // BUT for split domain we need absolute URL if typically separate.
+            // Assuming NEXT_PUBLIC_BASE_URL is set on Frontend to point to Backend.
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+            const res = await fetch(`${baseUrl}/api/upload`, {
+                method: "POST",
+                body: formData,
+                credentials: "include", // Important for cookies!
+            });
 
-        if (res.error) {
-            toast.error(res.error);
-        } else {
-            toast.success(res.message);
-            setFile(null);
+            const data = await res.json();
+
+            if (!res.ok) {
+                toast.error(data.error || "Upload failed");
+            } else {
+                toast.success(data.message || "File uploaded successfully!");
+                setFile(null);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Network error during upload");
         }
         setUploading(false);
     };
