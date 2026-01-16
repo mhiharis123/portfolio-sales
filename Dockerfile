@@ -23,15 +23,17 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN bun run build
 
 # Production image, copy all the files and run next
-FROM base AS runner
+# Use Node.js slim image for production to ensure 'node' binary and standard tools exist
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Use standard groupadd/useradd which are more universally available in slim images
+RUN groupadd -g 1001 nodejs
+RUN useradd -u 1001 -g nodejs -s /bin/sh -m nextjs
 
 COPY --from=builder /app/public ./public
 
