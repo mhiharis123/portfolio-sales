@@ -1,0 +1,18 @@
+# Netlify Configuration for Frontend-Only Deployment
+[build]
+  command = "bun run build"
+  publish = ".next"
+
+# Redirect all API requests to Dokploy backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://apiv2.harisidham.com/api/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+# Handle client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
