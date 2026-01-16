@@ -13,9 +13,4 @@ services:
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_XYZ_URL=${BETTER_AUTH_XYZ_URL} # URL where this backend is accessible
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
-    networks:
-      - portfolio_net
-
-networks:
-  portfolio_net:
-    external: true # Assumes you attach to your existing Dokploy network
+    # Network will be created automatically by Docker Compose
