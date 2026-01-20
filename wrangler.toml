@@ -4,4 +4,6 @@ compatibility_flags = ["nodejs_compat"]
 
 # pages_build_output_dir = ".vercel/output/static"
 
-
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "8dbddc468fdb4660841b78a4acb8c6a6"
