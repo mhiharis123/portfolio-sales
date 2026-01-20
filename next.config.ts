@@ -6,16 +6,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '35mb',
     },
   },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // Mark @neondatabase/serverless as external for server-side bundling
-      config.externals = config.externals || [];
-      config.externals.push({
-        '@neondatabase/serverless': '@neondatabase/serverless',
-      });
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
