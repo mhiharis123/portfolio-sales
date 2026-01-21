@@ -25,4 +25,10 @@ export const auth = betterAuth({
     trustedOrigins: [
         process.env.CORS_ORIGIN || "https://mystocks.pages.dev",
     ],
+    advanced: {
+        defaultCookieAttributes: {
+            sameSite: "none",
+            secure: true,
+        },
+    },
 });
