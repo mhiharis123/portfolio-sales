@@ -46,7 +46,7 @@ app.onError((err, c) => {
 });
 
 // Start server
-const port = parseInt(process.env.PORT || "3001", 10);
+const port = parseInt(process.env.PORT || "3002", 10);
 
 console.log(`🚀 API Server starting on port ${port}`);
 console.log(`📡 CORS enabled for: ${corsOrigin}`);

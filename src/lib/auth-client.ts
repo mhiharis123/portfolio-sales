@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 // API server URL - points to VPS backend
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://portfolio.harisidham.com";
 
 export const authClient = createAuthClient({
     baseURL: API_URL,
