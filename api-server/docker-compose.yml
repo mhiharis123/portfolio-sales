@@ -1,0 +1,27 @@
+services:
+  portfolio-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - PORT=3001
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  dokploy-network:
+    external: true

@@ -1,46 +1,52 @@
-"use server";
-
-import { auth } from "@/lib/auth";
-
-import { headers } from "next/headers";
+import { Hono } from "hono";
 import { z } from "zod";
+import { auth } from "../lib/auth";
+
+const upload = new Hono();
 
 const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 const ACCEPTED_FILE_TYPES = ["text/csv", "application/vnd.ms-excel"];
 
 const uploadSchema = z.object({
     file: z.instanceof(File)
-        .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 30MB.`)
+        .refine((file) => file.size <= MAX_FILE_SIZE, "Max file size is 30MB.")
         .refine(
             (file) => ACCEPTED_FILE_TYPES.includes(file.type) || file.name.endsWith(".csv"),
             "Only .csv files are accepted."
         ),
 });
 
-export async function uploadFile(formData: FormData) {
+upload.post("/", async (c) => {
+    // Get session from request
     const session = await auth.api.getSession({
-        headers: await headers(),
+        headers: c.req.raw.headers,
     });
 
     if (!session) {
-        return { error: "Unauthorized" };
+        return c.json({ error: "Unauthorized" }, 401);
     }
 
-    const file = formData.get("file") as File;
+    // Parse multipart form data
+    const formData = await c.req.formData();
+    const file = formData.get("file") as File | null;
 
+    if (!file) {
+        return c.json({ error: "No file provided" }, 400);
+    }
+
+    // Validate file
     const result = uploadSchema.safeParse({ file });
-
     if (!result.success) {
-        // cast error to any to avoid version mismatch issues during build
-        const issues = (result.error as any).issues || (result.error as any).errors;
+        const issues = result.error.issues;
         const msg = issues?.[0]?.message || "Validation failed";
-        return { error: msg };
+        return c.json({ error: msg }, 400);
     }
 
-    // Post to n8n
+    // Post to n8n webhook
     const n8nUrl = process.env.N8N_WEBHOOK_URL;
     if (!n8nUrl) {
-        return { error: "N8N_WEBHOOK_URL not configured" };
+        console.error("N8N_WEBHOOK_URL not configured");
+        return c.json({ error: "Upload service not configured" }, 500);
     }
 
     try {
@@ -58,9 +64,11 @@ export async function uploadFile(formData: FormData) {
             throw new Error(`Webhook failed: ${response.statusText}`);
         }
 
-        return { success: true, message: "File uploaded successfully!" };
+        return c.json({ success: true, message: "File uploaded successfully!" });
     } catch (error) {
         console.error("Upload error:", error);
-        return { error: "Failed to process file upload." };
+        return c.json({ error: "Failed to process file upload." }, 500);
     }
-}
+});
+
+export default upload;

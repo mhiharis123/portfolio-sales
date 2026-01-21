@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, FileIcon, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { uploadFile } from "@/actions/upload";
+import { authClient, API_URL } from "@/lib/auth-client";
 
 export default function FileUploader() {
     const [file, setFile] = useState<File | null>(null);
@@ -55,18 +55,31 @@ export default function FileUploader() {
         if (!file) return;
         setUploading(true);
 
-        const formData = new FormData();
-        formData.append("file", file);
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
 
-        const res = await uploadFile(formData);
+            // Call API server directly
+            const response = await fetch(`${API_URL}/api/upload`, {
+                method: "POST",
+                body: formData,
+                credentials: "include", // Required for cross-origin cookies
+            });
 
-        if (res.error) {
-            toast.error(res.error);
-        } else {
-            toast.success(res.message);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Upload failed");
+            }
+
+            toast.success(data.message || "File uploaded successfully!");
             setFile(null);
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error(error instanceof Error ? error.message : "Failed to upload file");
+        } finally {
+            setUploading(false);
         }
-        setUploading(false);
     };
 
     return (
