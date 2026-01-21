@@ -13,6 +13,12 @@ services:
       - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
       - CORS_ORIGIN=${CORS_ORIGIN}
       - PORT=3002
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portfolio-api.rule=Host(`portfolio.harisidham.com`)"
+      - "traefik.http.routers.portfolio-api.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.portfolio-api.loadbalancer.server.port=3002"
     networks:
       - dokploy-network
     healthcheck:
