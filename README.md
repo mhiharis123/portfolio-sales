@@ -46,10 +46,16 @@ The application is split into two distinct parts:
 
 Create `.env` files for both the root and `api-server` directories.
 
-**Frontend (`.env`)**
+**Frontend (`.env.local`)** - *Create this for local development*
 ```env
-# URL of your Hono API Server
+# URL of your local Hono API Server
 NEXT_PUBLIC_API_URL=http://localhost:3002
+```
+
+**Frontend (`.env`)** - *Base/Production configuration*
+```env
+# URL of your VPS API Server
+NEXT_PUBLIC_API_URL=https://portfolio.harisidham.com
 ```
 
 **Backend (`api-server/.env`)**
@@ -63,8 +69,8 @@ BETTER_AUTH_SECRET=your-secure-random-secret
 # N8N Webhook URL for processing uploads
 N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/xxx
 
-# Frontend Origin (CORS)
-CORS_ORIGIN=http://localhost:3000
+# Frontend Origin (CORS) - Comma separated for multiple origins
+CORS_ORIGIN=http://localhost:3000,https://mystocks.pages.dev
 
 # Server Port
 PORT=3002
@@ -90,11 +96,17 @@ bun run drizzle-kit push
 
 **Start Development Servers:**
 
-1.  **Start Backend:**
+1.  **Start Backend (Docker - Recommended):**
+    ```bash
+    cd api-server
+    docker-compose -f docker-compose.dev.yml up --build
+    # Runs on http://localhost:3002 with hot reloading
+    ```
+
+    *Alternatively, run natively:*
     ```bash
     cd api-server
     bun run dev
-    # Runs on http://localhost:3002
     ```
 
 2.  **Start Frontend:**

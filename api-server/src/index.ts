@@ -7,7 +7,7 @@ import uploadRoutes from "./routes/upload";
 const app = new Hono();
 
 // Get CORS origin from environment
-const corsOrigin = process.env.CORS_ORIGIN || "https://mystocks.pages.dev";
+const corsOrigin = (process.env.CORS_ORIGIN || "https://mystocks.pages.dev").split(",").map(o => o.trim());
 
 // Middleware: Logger
 app.use("*", logger());
