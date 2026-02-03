@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { auth } from "./lib/auth";
 import uploadRoutes from "./routes/upload";
+import topHoldingsRoutes from "./routes/top-holdings";
 
 const app = new Hono();
 
@@ -33,6 +34,9 @@ app.on(["GET", "POST"], "/api/auth/*", (c) => {
 
 // Upload routes
 app.route("/api/upload", uploadRoutes);
+
+// Top holdings routes
+app.route("/api/top-holdings", topHoldingsRoutes);
 
 // 404 handler
 app.notFound((c) => {

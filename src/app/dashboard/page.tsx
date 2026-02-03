@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import FileUploader from "@/components/FileUploader";
+import TopHoldings from "@/components/TopHoldings";
 import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 
@@ -56,7 +57,13 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Top Holdings Section */}
+                <div className="mb-12">
+                    <TopHoldings />
+                </div>
+
+                {/* File Upload Section */}
                 <div className="space-y-6 text-center mb-10">
                     <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         Upload Portfolio Data

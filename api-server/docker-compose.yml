@@ -12,6 +12,7 @@ services:
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
       - CORS_ORIGIN=${CORS_ORIGIN}
+      - REDIS_URL=${REDIS_URL}
       - PORT=3002
     labels:
       - "traefik.enable=true"
@@ -27,7 +28,29 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    depends_on:
+      portfolio-redis:
+        condition: service_healthy
+
+  portfolio-redis:
+    image: redis:7-alpine
+    container_name: portfolio-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
 networks:
   dokploy-network:
     external: true
+
+volumes:
+  redis-data:
