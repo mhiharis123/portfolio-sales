@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, FileIcon, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { authClient, API_URL } from "@/lib/auth-client";
+import { API_URL } from "@/lib/auth-client";
 
 export default function FileUploader() {
     const [file, setFile] = useState<File | null>(null);
